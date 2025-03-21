@@ -1,80 +1,112 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Form, Input, Button, message } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 
 export const SignupPage = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [error, setError] = useState<null | string>(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [form] = Form.useForm();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const onFinish = () => {
+    const values = form.getFieldsValue();
+    setLoading(true);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.");
-      return;
-    }
-    setError(null);
-    console.log("Inscription réussie avec :", formData);
+    // Simulation d'inscription (remplace par un appel API)
+    setTimeout(() => {
+      if (values.password !== values.confirmPassword) {
+        message.error("Les mots de passe ne correspondent pas !");
+      } else {
+        message.success("Inscription réussie !");
+        navigate("/dashboard"); // Redirection après inscription
+      }
+      setLoading(false);
+    }, 2000);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
+    <div className="min-h-screen flex items-center justify-center bg-gray-800">
+      <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-96">
+        <h2 className="text-center text-white text-2xl font-bold">
           Inscription
         </h2>
 
-        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
-
-        <form onSubmit={handleSubmit} className="mt-4">
-          <label className="block text-gray-700 dark:text-gray-300">
-            Email
-          </label>
-          <input
-            type="email"
+        <Form layout="vertical" onFinish={onFinish}>
+          {/* Champ Email */}
+          <Form.Item
+            label={<span className="text-gray-300">Email</span>}
             name="email"
-            className="mt-2 w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
-            placeholder="Votre email"
-            onChange={handleChange}
-          />
-
-          <label className="block text-gray-700 dark:text-gray-300 mt-4">
-            Mot de passe
-          </label>
-          <input
-            type="password"
-            name="password"
-            className="mt-2 w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
-            placeholder="Mot de passe"
-            onChange={handleChange}
-          />
-
-          <label className="block text-gray-700 dark:text-gray-300 mt-4">
-            Confirmer le mot de passe
-          </label>
-          <input
-            type="password"
-            name="confirmPassword"
-            className="mt-2 w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
-            placeholder="Confirmez le mot de passe"
-            onChange={handleChange}
-          />
-
-          <button
-            type="submit"
-            className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg"
+            rules={[
+              { required: true, message: "Veuillez entrer votre email !" },
+              { type: "email", message: "Email invalide !" },
+            ]}
           >
-            S'inscrire
-          </button>
-        </form>
+            <Input placeholder="Votre email" size="large" />
+          </Form.Item>
 
-        <p className="mt-4 text-center text-gray-700 dark:text-gray-300">
+          {/* Champ Mot de passe */}
+          <Form.Item
+            label={<span className="text-gray-300">Mot de passe</span>}
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Veuillez entrer votre mot de passe !",
+              },
+              {
+                min: 6,
+                message: "Le mot de passe doit contenir au moins 6 caractères.",
+              },
+            ]}
+          >
+            <Input.Password placeholder="Mot de passe" size="large" />
+          </Form.Item>
+
+          {/* Champ Confirmation du mot de passe */}
+          <Form.Item
+            label={
+              <span className="text-gray-300">Confirmer le mot de passe</span>
+            }
+            name="confirmPassword"
+            dependencies={["password"]}
+            rules={[
+              {
+                required: true,
+                message: "Veuillez confirmer votre mot de passe !",
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Les mots de passe ne correspondent pas !")
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password
+              placeholder="Confirmez le mot de passe"
+              size="large"
+            />
+          </Form.Item>
+
+          {/* Bouton d'inscription */}
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="w-full"
+              loading={loading}
+              size="large"
+            >
+              S'inscrire
+            </Button>
+          </Form.Item>
+        </Form>
+
+        {/* Lien Connexion */}
+        <p className="text-center text-gray-400 mt-4">
           Déjà un compte ?{" "}
           <Link to="/login" className="text-blue-500 hover:underline">
             Se connecter

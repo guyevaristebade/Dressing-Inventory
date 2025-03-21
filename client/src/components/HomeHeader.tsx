@@ -15,14 +15,17 @@ export const HomeHeader = ({
   setMenuOpen,
 }: HomeHeaderProps) => {
   return (
-    <header className="bg-white dark:bg-gray-900 shadow-md">
+    <header className="bg-whit bg-gray-900 shadow-md">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link
           to="/"
-          className="text-2xl font-bold text-gray-800 dark:text-white"
+          className="text-2xl font-bold text-white flex items-center gap-2"
         >
-          Dressy
+          Dressy{" "}
+          <span className="text-blue-500 animate-[shake_0.5s_ease-in-out]">
+            👘
+          </span>
         </Link>
 
         {/* Boutons Dark Mode + Auth */}

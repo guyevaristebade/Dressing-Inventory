@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import React from "react";
+import { Link } from "react-router-dom";
 // import { HomeHeader } from "../components";
 
 export const HomePage = () => {
@@ -16,7 +16,7 @@ export const HomePage = () => {
         setMenuOpen={setMenuOpen}
       /> */}
       {/* HERO SECTION */}
-      <section className="bg-gray-100 dark:bg-gray-800 min-h-screen flex items-center justify-center text-center px-6">
+      <section className="bg-gray-800 min-h-screen flex items-center justify-center text-center px-6">
         <div className="max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
             Gérez votre garde-robe en toute simplicité !

@@ -1,53 +1,63 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Form, Input, Button, message } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 
 export const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState<null | string>(null);
-  const [error, setError] = useState<null | string>(null);
+  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    const values = form.getFieldsValue();
+    const { email } = values;
+
     if (!email) {
-      setError("Veuillez entrer votre email.");
+      message.error("Veuillez entrer votre email.");
       return;
     }
 
-    setMessage("Un lien de réinitialisation a été envoyé.");
-    setError(null);
+    setLoading(true);
+
+    // Simuler l'envoi de l'email (remplacer par appel API réel)
+    setTimeout(() => {
+      message.success(
+        "Un lien de réinitialisation a été envoyé à votre email."
+      );
+      navigate("/login"); // Redirection après envoi
+      setLoading(false);
+    }, 2000);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-96">
+        <h2 className="text-center text-white text-2xl mt-4 ">
           Mot de passe oublié
         </h2>
 
-        {message && (
-          <p className="text-green-500 text-center mt-2">{message}</p>
-        )}
-        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
-
-        <form onSubmit={handleSubmit} className="mt-4">
-          <label className="block text-gray-700 dark:text-gray-300">
-            Email
-          </label>
-          <input
-            type="email"
-            className="mt-2 w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
-            placeholder="Votre email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <button
-            type="submit"
-            className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg"
+        <Form layout="vertical" form={form} onFinish={handleSubmit}>
+          <Form.Item
+            label={<span className="text-gray-300">Email</span>}
+            name="email"
+            rules={[
+              { required: true, message: "Veuillez entrer votre email !" },
+              { type: "email", message: "Email invalide !" },
+            ]}
           >
-            Envoyer le lien
-          </button>
-        </form>
+            <Input placeholder="Votre email" size="large" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              htmlType="submit"
+              className="w-full"
+              loading={loading}
+              size="large"
+            >
+              Envoyer le lien
+            </Button>
+          </Form.Item>
+        </Form>
 
         <div className="mt-4 text-center">
           <Link to="/login" className="text-blue-500 hover:underline">
